@@ -7,6 +7,25 @@
   var pantallas = Array.prototype.slice.call(mazo.querySelectorAll('.pantalla'));
   if (!pantallas.length) return;
 
+  /* ---------- lienzo fijo de 1920x1080: una sola escala para todo ----------
+     El reparto interno no depende de la ventana, solo el tamano final.
+     Asi la diapositiva se ve identica en cualquier pantalla y al pasar
+     a pantalla completa no se recoloca nada. */
+  var LIENZO_W = 1920, LIENZO_H = 1080;
+  function escalar() {
+    var s = Math.min(window.innerWidth / LIENZO_W, window.innerHeight / LIENZO_H);
+    document.documentElement.style.setProperty('--esc', s);
+  }
+  escalar();
+  window.addEventListener('resize', escalar);
+  /* medir siempre a escala 1: getBoundingClientRect devuelve pixeles ya
+     escalados, y sin esto los calculos volverian a depender de la ventana */
+  function sinEscala(fn) {
+    var t = mazo.style.transform;
+    mazo.style.transform = 'translate(-50%,-50%)';
+    try { return fn(); } finally { mazo.style.transform = t; }
+  }
+
   var actual = 0;
   var barra = document.querySelector('.progreso');
   var indice = document.querySelector('.indice');
@@ -46,6 +65,10 @@
 
   /* ---------- cifras que cuentan una vez ---------- */
   function contar(pantalla) {
+    /* las cifras se miden al terminar de contar: mientras suben desde cero
+       ocupan menos y el reparto saldria distinto en la primera visita */
+    var pendientes = 0;
+    function fin() { if (--pendientes <= 0) ajustarTodas(); }
     Array.prototype.forEach.call(pantalla.querySelectorAll('.cifra[data-valor]'), function (el) {
       if (el.dataset.contado) return;
       el.dataset.contado = '1';
@@ -58,6 +81,7 @@
       if (window.matchMedia('(prefers-reduced-motion:reduce)').matches) {
         el.textContent = prefijo + fmt(destino, dec, mil) + sufijo; return;
       }
+      pendientes++;
       var ini = null, dur = 520;
       function paso(ts) {
         if (ini === null) ini = ts;
@@ -65,7 +89,7 @@
         var e = 1 - Math.pow(1 - p, 3);
         el.textContent = prefijo + fmt(destino * e, dec, mil) + sufijo;
         if (p < 1) requestAnimationFrame(paso);
-        else el.textContent = prefijo + fmt(destino, dec, mil) + sufijo;
+        else { el.textContent = prefijo + fmt(destino, dec, mil) + sufijo; fin(); }
       }
       requestAnimationFrame(paso);
     });
@@ -99,6 +123,11 @@
     return max - abajo;
   }
   function ajustar(p) {
+    /* dos pasadas: la primera reparte, la segunda converge al mismo
+       resultado venga de una carga nueva o de volver a la pantalla */
+    sinEscala(function () { ajustarCrudo(p); ajustarCrudo(p); });
+  }
+  function ajustarCrudo(p) {
     var c = p.querySelector('.cuerpo');
     if (!c) return;
     c.style.transform = '';
@@ -168,7 +197,9 @@
     }
     /* si aun queda mucho blanco abajo, una parte pasa arriba para que quede centrado */
     var resto = estirado ? 0 : -sobrante(p, c);
-    if (resto > 60) c.style.marginTop = Math.round(Math.min(resto * 0.5, 300)) + 'px';
+    /* el margen de centrado se cuantiza a 20 px: asi cae en el mismo valor
+       aunque la medida de partida varie en unos pocos pixeles */
+    if (resto > 60) c.style.marginTop = (Math.round(Math.min(resto * 0.5, 300) / 20) * 20) + 'px';
     ajustarGraficos(p);
   }
   /* el sitio que sobra se reparte en los huecos, con tope, y el resto queda abajo */
@@ -235,11 +266,13 @@
     }
   }
   function ajustarTodas() {
-    pantallas.forEach(function (p) {
-      var activa = p.classList.contains('activa');
-      if (!activa) { p.style.visibility = 'hidden'; p.classList.add('activa'); }
-      ajustar(p);
-      if (!activa) { p.classList.remove('activa'); p.style.visibility = ''; }
+    sinEscala(function () {
+      pantallas.forEach(function (p) {
+        var activa = p.classList.contains('activa');
+        if (!activa) { p.style.visibility = 'hidden'; p.classList.add('activa'); }
+        ajustarCrudo(p); ajustarCrudo(p);
+        if (!activa) { p.classList.remove('activa'); p.style.visibility = ''; }
+      });
     });
   }
   function medirBarra() {
@@ -249,6 +282,11 @@
   }
   medirBarra();
   window.addEventListener('resize', medirBarra);
+  /* la barra se mide con la tipografia ya cargada: si no, el ancho
+     reservado en el pie sale distinto segun lo que tarde la fuente */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { medirBarra(); ajustarTodas(); });
+  }
   window.__ajustarTodas = ajustarTodas;
   window.__ajustar = ajustar;
 
@@ -268,7 +306,7 @@
     p.classList.add('activa');
     p.scrollTop = 0;
     notasDe(p);
-    ajustar(p);
+    ajustarTodas();
     contar(p);
     if (barra) barra.style.width = (pantallas.length > 1 ? (actual / (pantallas.length - 1)) * 100 : 100) + '%';
     Array.prototype.forEach.call(contadores, function (c) {

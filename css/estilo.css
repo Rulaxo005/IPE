@@ -25,7 +25,7 @@
 html,body{margin:0;padding:0;height:100%}
 body{
   background:var(--papel); color:var(--tinta);
-  font-family:var(--txt); font-size:clamp(15px,1.05vw,18px); line-height:1.5;
+  font-family:var(--txt); font-size:clamp(15px,20.16px,18px); line-height:1.5;
   -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
   overflow:hidden;
 }
@@ -39,12 +39,21 @@ a{color:var(--iveco)}
 .num{font-family:var(--mono); font-variant-numeric:tabular-nums; font-feature-settings:"tnum" 1}
 
 /* ---------- Estructura de pantalla ---------- */
-.mazo{position:relative; height:100vh; width:100%; overflow:hidden}
+/* ---- Lienzo fijo: la diapositiva mide siempre 1920x1080 px ----
+   Un unico transform:scale() la encaja en la ventana, asi el reparto
+   interno es identico en cualquier pantalla. --esc lo fija el JS. ---- */
+.mazo{
+  position:fixed; left:50%; top:50%;
+  width:1920px; height:1080px;
+  transform:translate(-50%,-50%) scale(var(--esc,1));
+  transform-origin:center center;
+  overflow:hidden; background:var(--papel);
+}
 .pantalla{
   position:absolute; inset:0;
   display:grid; grid-template-rows:auto minmax(0,1fr) auto;
-  gap:clamp(10px,1.6vh,20px);
-  padding:clamp(20px,3.4vh,40px) clamp(28px,4.2vw,70px) clamp(12px,1.7vh,20px);
+  gap:clamp(10px,17.28px,20px);
+  padding:clamp(20px,36.72px,40px) clamp(28px,80.64px,70px) clamp(12px,18.36px,20px);
   opacity:0; visibility:hidden; transform:translateY(10px);
   transition:opacity .3s ease, transform .3s ease, visibility .3s;
   overflow-y:auto; overflow-x:hidden;
@@ -53,7 +62,7 @@ a{color:var(--iveco)}
 
 /* ---------- Cabecera ---------- */
 .cab{display:flex; align-items:flex-end; justify-content:space-between; gap:24px;
-  border-bottom:1px solid var(--filete); padding-bottom:clamp(6px,.9vh,11px)}
+  border-bottom:1px solid var(--filete); padding-bottom:clamp(6px,9.72px,11px)}
 .cab-izq{min-width:0}
 .rotulo{
   font-size:.7rem; font-weight:600; letter-spacing:.14em; text-transform:uppercase;
@@ -62,16 +71,16 @@ a{color:var(--iveco)}
 .rotulo .tramo{width:22px; height:2px; background:var(--filete-fuerte); display:inline-block}
 .pantalla[data-via="a"] .rotulo .tramo{background:var(--tinta)}
 .pantalla[data-via="b"] .rotulo .tramo{background:var(--tinta)}
-.cab h2{font-size:clamp(1.42rem,2.25vw,2.1rem)}
+.cab h2{font-size:clamp(1.42rem,43.2px,2.1rem)}
 .cab .bajada{color:var(--gris); font-size:.88rem; margin-top:.22em; max-width:78ch}
 .paso{font-family:var(--mono); font-size:.76rem; color:var(--gris-claro); white-space:nowrap; letter-spacing:.02em}
 .paso b{color:var(--tinta); font-weight:700}
 
 /* ---------- Cuerpo ---------- */
-.cuerpo{min-height:0; display:flex; flex-direction:column; justify-content:flex-start; gap:clamp(10px,1.5vh,18px)}
+.cuerpo{min-height:0; display:flex; flex-direction:column; justify-content:flex-start; gap:clamp(10px,16.2px,18px)}
 .cuerpo > *{flex-shrink:0}
 .cuerpo > .grafico{flex-shrink:1}
-.cols{display:grid; gap:clamp(16px,1.9vw,30px); align-items:start; min-height:0}
+.cols{display:grid; gap:clamp(16px,36.48px,30px); align-items:start; min-height:0}
 .c-2{grid-template-columns:1fr 1fr}
 .c-2a{grid-template-columns:1.32fr 1fr}
 .c-2b{grid-template-columns:1fr 1.32fr}
@@ -81,7 +90,7 @@ a{color:var(--iveco)}
 .cols.crece{display:grid; flex-direction:row; flex:0 0 auto; align-content:start}
 
 /* ---------- Bloques ---------- */
-.bloque{background:var(--blanco); border:1px solid var(--filete); border-radius:var(--radio); padding:clamp(11px,1.25vw,16px)}
+.bloque{background:var(--blanco); border:1px solid var(--filete); border-radius:var(--radio); padding:clamp(11px,24px,16px)}
 .bloque > h3, .rot-bloque{
   font-size:.7rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase;
   color:var(--gris); margin:0 0 .55em; display:block
@@ -134,13 +143,13 @@ a{color:var(--iveco)}
 .marco > table{border-radius:inherit}
 
 /* ---------- Cifras grandes ---------- */
-.cifras{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:clamp(10px,1.4vw,22px)}
+.cifras{display:grid; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr); gap:clamp(10px,26.88px,22px)}
 .cifras > div{border-top:2px solid var(--tinta); padding-top:.42em; min-width:0}
 .cifra{font-family:var(--mono); font-weight:700; font-variant-numeric:tabular-nums;
-  font-size:clamp(1.6rem,3.1vw,2.7rem); line-height:1; letter-spacing:-.03em; display:block}
+  font-size:clamp(1.6rem,59.52px,2.7rem); line-height:1; letter-spacing:-.03em; display:block}
 .cifra-pie{font-size:.78rem; color:var(--gris); margin-top:.35em; display:block; line-height:1.35}
 .cifra-u{font-size:.5em; font-weight:600; letter-spacing:0}
-.cifras-sm .cifra{font-size:clamp(1.05rem,1.7vw,1.5rem)}
+.cifras-sm .cifra{font-size:clamp(1.05rem,32.64px,1.5rem)}
 .cifras-sm .cifra-pie{font-size:.75rem}
 
 /* ---------- Glosario en línea ---------- */
@@ -152,7 +161,7 @@ a{color:var(--iveco)}
 .term::after{
   content:attr(data-def); position:absolute; left:50%; bottom:calc(100% + 9px);
   transform:translateX(-50%) translateY(3px);
-  width:max-content; max-width:min(330px,60vw);
+  width:max-content; max-width:min(330px,1152px);
   background:var(--tinta); color:#F7F6F3; font-size:.8rem; font-weight:400; line-height:1.4;
   letter-spacing:0; padding:.55em .75em; border-radius:var(--radio); text-align:left;
   box-shadow:0 10px 26px -10px rgba(0,0,0,.4);
@@ -190,8 +199,8 @@ figure{margin:0}
 figcaption{font-size:.73rem; color:var(--gris); margin-top:.42em; line-height:1.35}
 figcaption b{color:var(--tinta); font-weight:600}
 .grafico{background:var(--blanco); border:1px solid var(--filete); border-radius:var(--radio);
-  padding:clamp(9px,1vw,14px); display:flex; flex-direction:column; justify-content:center;
-  min-height:0; max-height:clamp(150px,52vh,560px); overflow:hidden}
+  padding:clamp(9px,19.2px,14px); display:flex; flex-direction:column; justify-content:center;
+  min-height:0; max-height:clamp(150px,561.6px,560px); overflow:hidden}
 .grafico.crece{max-height:none}
 .grafico img,.grafico svg{display:block; width:100%; height:auto; min-height:0;
   max-height:100%; object-fit:contain}
@@ -199,7 +208,7 @@ figcaption b{color:var(--tinta); font-weight:600}
 /* ---------- Interfaz de navegación ---------- */
 .progreso{position:fixed; top:0; left:0; height:2px; background:var(--tinta); width:0;
   transition:width .3s ease; z-index:60}
-.barra-inf{position:fixed; bottom:clamp(10px,1.6vh,18px); right:clamp(14px,2vw,26px);
+.barra-inf{position:fixed; bottom:clamp(10px,17.28px,18px); right:clamp(14px,38.4px,26px);
   display:flex; align-items:center; gap:8px; z-index:55}
 .btn{
   font-family:var(--txt); font-size:.74rem; font-weight:600; letter-spacing:.02em;
@@ -213,7 +222,7 @@ figcaption b{color:var(--tinta); font-weight:600}
 
 /* índice */
 .indice{position:fixed; inset:0; background:rgba(247,246,243,.97); backdrop-filter:blur(10px);
-  z-index:70; display:none; padding:clamp(34px,6vh,70px) clamp(30px,6vw,90px); overflow-y:auto}
+  z-index:70; display:none; padding:clamp(34px,64.8px,70px) clamp(30px,115.2px,90px); overflow-y:auto}
 .indice.abierto{display:block}
 .indice h3{font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--gris-claro);
   margin-bottom:1.1em}
@@ -232,16 +241,16 @@ figcaption b{color:var(--tinta); font-weight:600}
 
 /* ---------- Portada ---------- */
 .portada{display:grid; grid-template-rows:1fr auto; align-content:center;
-  padding:clamp(34px,5.6vh,72px) clamp(34px,6vw,96px)}
+  padding:clamp(34px,60.48px,72px) clamp(34px,115.2px,96px)}
 .portada-cuerpo{align-self:center; min-width:0}
 .portada-rejilla{position:fixed; inset:0; z-index:-1; opacity:.5;
   background-image:linear-gradient(var(--filete) 1px,transparent 1px),linear-gradient(90deg,var(--filete) 1px,transparent 1px);
   background-size:46px 46px}
-.portada h1{font-size:clamp(2.4rem,6.6vw,5.4rem); letter-spacing:-.045em; line-height:.92; font-weight:700}
-.portada .alumno{font-size:clamp(.92rem,1.2vw,1.08rem); color:var(--gris); margin-top:1.3em}
+.portada h1{font-size:clamp(2.4rem,126.72px,5.4rem); letter-spacing:-.045em; line-height:.92; font-weight:700}
+.portada .alumno{font-size:clamp(.92rem,23.04px,1.08rem); color:var(--gris); margin-top:1.3em}
 .portada .alumno b{color:var(--tinta); font-weight:600}
 .portada .partes{margin-top:.45em; font-size:.94rem; color:var(--gris); max-width:60ch}
-.filetes{display:flex; height:3px; margin-top:clamp(18px,2.8vh,32px); width:min(430px,60%)}
+.filetes{display:flex; height:3px; margin-top:clamp(18px,30.24px,32px); width:min(430px,60%)}
 .filetes i{flex:1} .filetes i:first-child{background:var(--iveco)} .filetes i:last-child{background:var(--mona)}
 .portada-pie{display:flex; flex-direction:column; align-items:flex-start; gap:.3em; font-size:.74rem;
   color:var(--gris-claro); border-top:1px solid var(--filete); padding-top:.9em;
@@ -249,20 +258,20 @@ figcaption b{color:var(--tinta); font-weight:600}
 
 /* accesos a las dos partes */
 .puertas{display:flex; flex-direction:column; gap:10px;
-  margin-top:clamp(26px,4vh,44px); max-width:min(660px,100%)}
+  margin-top:clamp(26px,43.2px,44px); max-width:min(660px,100%)}
 .puerta{
   display:grid; grid-template-columns:auto 1fr auto auto; align-items:center;
-  gap:clamp(14px,2.2vw,28px);
-  padding:clamp(13px,1.6vh,19px) clamp(16px,1.8vw,24px);
+  gap:clamp(14px,42.24px,28px);
+  padding:clamp(13px,17.28px,19px) clamp(16px,34.56px,24px);
   background:var(--blanco); border:1px solid var(--filete); border-left:3px solid var(--filete-fuerte);
   border-radius:var(--radio); text-decoration:none; color:inherit;
   transition:border-color .2s ease, box-shadow .2s ease, transform .2s ease, background .2s ease
 }
 .puerta:hover,.puerta:focus-visible{box-shadow:var(--sombra); transform:translateX(3px); outline:none}
 .puerta-let{font-family:var(--mono,ui-monospace,monospace); font-weight:700; line-height:1;
-  font-size:clamp(1.25rem,2vw,1.6rem); letter-spacing:-.03em; color:var(--gris-claro);
+  font-size:clamp(1.25rem,38.4px,1.6rem); letter-spacing:-.03em; color:var(--gris-claro);
   transition:color .2s ease}
-.puerta-tit{font-size:clamp(1.02rem,1.7vw,1.38rem); font-weight:600; letter-spacing:-.022em; line-height:1.15}
+.puerta-tit{font-size:clamp(1.02rem,32.64px,1.38rem); font-weight:600; letter-spacing:-.022em; line-height:1.15}
 .puerta-num{font-family:var(--mono,ui-monospace,monospace); font-size:.72rem; letter-spacing:.06em;
   color:var(--gris-claro); white-space:nowrap}
 .puerta-fle{font-size:1.05rem; color:var(--filete-fuerte); line-height:1;
@@ -280,7 +289,8 @@ figcaption b{color:var(--tinta); font-weight:600}
   @page{size:A4 landscape; margin:9mm}
   html,body{height:auto; overflow:visible; background:#fff; font-size:10.5pt}
   .progreso,.barra-inf,.indice,.portada-rejilla{display:none !important}
-  .mazo{height:auto; overflow:visible}
+  .mazo{position:static; left:auto; top:auto; width:auto; height:auto;
+    transform:none; overflow:visible; background:#fff}
   .pantalla{position:static; inset:auto; opacity:1 !important; visibility:visible !important;
     transform:none !important; min-height:186mm; page-break-after:always; break-after:page;
     padding:0 0 6mm; overflow:visible}
@@ -289,15 +299,6 @@ figcaption b{color:var(--tinta); font-weight:600}
   .bloque,.tabla,.grafico{box-shadow:none}
 }
 
-/* ---------- Pantallas estrechas ---------- */
-@media (max-width:860px){
-  .c-2,.c-2a,.c-2b,.c-3{grid-template-columns:1fr}
-  .cifras{grid-auto-flow:row; grid-template-columns:1fr 1fr}
-  .cab{flex-direction:column; align-items:flex-start; gap:8px}
-  .pie{flex-direction:column; align-items:flex-start; gap:8px; padding-right:0}
-  .marco{overflow-x:auto}
-  body{font-size:15px}
-}
 @media (prefers-reduced-motion:reduce){
   *{transition-duration:.01ms !important; animation-duration:.01ms !important}
 }
